@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-import { api, ApiError } from "../../api";
+import { api } from "../../api";
+import { ApiError } from "@/lib/api/api";
 
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const res = await api.get("/auth/me", {
+    const res = await api.get("/users/me", {
       headers: {
         Cookie: cookieStore.toString(),
       },

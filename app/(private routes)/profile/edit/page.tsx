@@ -1,9 +1,9 @@
 "use client";
 
-import {  FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import css from "./EditProfile.module.css";
+import css from "./EditProfilePage.module.css";
 import { useAuthStore } from "@/lib/store/authStore";
 import { getMe } from "@/lib/api/clientApi";
 import { updateMe } from "@/lib/api/clientApi";
@@ -14,7 +14,9 @@ export default function UpdateProfile() {
   const router = useRouter();
   const { setUser } = useAuthStore();
   const [email, setEmail] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState(
+    "https://ac.goit.global/fullstack/react/default-avatar.jpg"
+  );
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
 
@@ -22,18 +24,18 @@ export default function UpdateProfile() {
     const fetchUser = async () => {
       try {
         const user = await getMe();
-        setUsername(user.username),
-          setEmail(user.email),
-          setAvatar(
-            user.avatar && user.avatar.trim() !== ""
-              ? user.avatar
-              : "https://ac.goit.global/default-avatar.png"
-          );
-        fetchUser;
+        setUsername(user.username);
+        setEmail(user.email);
+        setAvatar(
+          user.avatar && user.avatar.trim() !== ""
+            ? user.avatar
+            : "https://ac.goit.global/default-avatar.png"
+        );
       } catch (err) {
         setError("Failed to load user data");
       }
     };
+    fetchUser();
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -54,7 +56,10 @@ export default function UpdateProfile() {
           Back to Profile
         </Link>
         <Image
-          src={avatar}
+          src={
+            avatar ||
+            "https://ac.goit.global/fullstack/react/default-avatar.jpg"
+          }
           alt="User Avatar"
           width={120}
           height={120}

@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { api, ApiError } from "../../api";
+import { api } from "../../api";
+import { ApiError } from "@/lib/api/api";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,9 +12,9 @@ export async function GET(request: NextRequest, { params }: Props) {
   try {
     const cookieStorte = await cookies();
     const { id } = await params;
-    const res = await api(`/notes/${id}`, {
+    const res = await api.get(`/notes/${id}`, {
       headers: {
-        Cookies: cookieStorte.toString(),
+        Cookie: cookieStorte.toString(),
       },
     });
     return NextResponse.json(res.data, { status: res.status });
@@ -35,7 +36,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
     const { id } = await params;
     const res = await api.delete(`/notes/${id}`, {
       headers: {
-        Cookies: cookieStore.toString(),
+        Cookie: cookieStore.toString(),
       },
     });
     return NextResponse.json({ status: res.status });
@@ -59,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 
     const res = await api.patch(`/notes/${id}`, body, {
       headers: {
-        Cookies: cookieStore.toString(),
+        Cookie: cookieStore.toString(),
       },
     });
     return NextResponse.json(res.data, { status: res.status });

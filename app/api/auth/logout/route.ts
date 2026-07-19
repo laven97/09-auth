@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-import { api, ApiError } from "../../api";
+import { api } from "../../api";
+import { ApiError } from "@/lib/api/api";
 
 export async function POST() {
   try {
@@ -10,9 +11,9 @@ export async function POST() {
     const accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
-    await api.post("auth/logout", {
+    await api.post("auth/logout",{}, {
       headers: {
-        Cookie: `accesssToken = ${accessToken};refreshToken = ${refreshToken}`,
+        Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
       },
     });
 

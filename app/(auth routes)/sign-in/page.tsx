@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ApiError } from "@/app/api/api";
 import { login } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import css from "./SignInPage.module.css";
+import { ApiError } from "@/lib/api/api";
 
 const SignIn = () => {
   const router = useRouter();
-  const { setUser } = useAuthStore();
+  const setUser = useAuthStore((state) => state.setUser);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,7 +34,7 @@ const SignIn = () => {
 
   return (
     <main className={css.mainContent}>
-      <form className={css.form}>
+      <form className={css.form} onSubmit={handleSubmit}>
         <h1 className={css.formTitle}>Sign in</h1>
 
         <div className={css.formGroup}>

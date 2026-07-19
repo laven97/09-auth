@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { cookies } from "next/headers";
 
-import { api, ApiError } from "../../api";
+import { api } from "../../api";
+import { ApiError } from "@/lib/api/api";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
         };
 
         if (parsed.accessToken) {
-          cookieStore.set("accessTokne", parsed.accessToken, options);
+          cookieStore.set("accessToken", parsed.accessToken, options);
         }
         if (parsed.refreshToken) {
           cookieStore.set("refreshToken", parsed.refreshToken, options);

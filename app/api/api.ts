@@ -5,4 +5,3 @@ export const api = axios.create({
   withCredentials:true
 });
 
-export type ApiError = AxiosError<{ error: string }>;

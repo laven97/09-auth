@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import css from "./SignUpPage.module.css";
-import { ApiError } from "@/app/api/api";
 import { register } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
+import { ApiError } from "@/lib/api/api";
 
 const SignUp = () => {
   const router = useRouter();
@@ -62,7 +62,7 @@ const SignUp = () => {
           </button>
         </div>
 
-        <p className={css.error}>Error</p>
+        <p className={css.error}>{error}</p>
       </form>
     </main>
   );

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { parse } from "cookie";
 
-import { api, ApiError } from "../../api";
+import { api } from "../../api";
+import { ApiError } from "@/lib/api/api";
 
 export async function GET() {
   try {
@@ -33,7 +34,7 @@ export async function GET() {
           };
 
           if (parsed.accessToken) {
-            cookieStore.set("accessTokne", parsed.accessToken, options);
+            cookieStore.set("accessToken", parsed.accessToken, options);
           }
           if (parsed.refreshToken) {
             cookieStore.set("refreshToken", parsed.refreshToken, options);

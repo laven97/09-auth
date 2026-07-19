@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { api, ApiError } from "../api";
+import { api } from "../api";
+import { ApiError } from "@/lib/api/api";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     const search = request.nextUrl.searchParams.get("search") ?? "";
     const page = Number(request.nextUrl.searchParams.get("page") ?? 1);
 
-    const res = await api("/notes", {
+    const res = await api.get("/notes", {
       params: {
         ...(search !== "" && { search }),
         page,

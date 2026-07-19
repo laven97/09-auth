@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from "next/navigation";
-import NotePreview from "../NotePreview.client";
+import NotePreview from "@/app/@modal/(.)notes/[id]/NotePreview.client";
+
 
 export default function NoteModal({ params }: { params: { id: string } }) {
   return <NotePreview id={params.id} />;

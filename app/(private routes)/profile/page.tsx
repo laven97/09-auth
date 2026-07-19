@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 
 import css from "./ProfilePage.module.css";
-import { getMe } from "@/lib/api/clientApi";
+import { getMe } from "@/lib/api/serviceApi";
 
 export default async function ProfilePage() {
   let user;
@@ -31,7 +29,7 @@ export default async function ProfilePage() {
           </div>
           <div className={css.avatarWrapper}>
             <Image
-              src="user_avatar"
+              src={user.avatar}
               alt="User Avatar"
               width={120}
               height={120}
@@ -39,8 +37,8 @@ export default async function ProfilePage() {
             />
           </div>
           <div className={css.profileInfo}>
-            <p>Username: user_username</p>
-            <p>Email: user_email</p>
+            <p>Username: {user.username}</p>
+            <p>Email: {user.email}</p>
           </div>
         </div>
       </main>
