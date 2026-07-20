@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { checkSession } from "./lib/api/serviceApi";
+import { checkSession } from "./lib/api/serverApi";
 
 export async function proxy(req: NextRequest) {
   const cookieStore = await cookies();

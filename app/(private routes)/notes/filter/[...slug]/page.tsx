@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { NotesClient } from "./Notes.client";
 import { NoteTags } from "@/types/note";
-import { fetchNotes } from "@/lib/api/serviceApi";
+import { fetchNotes } from "@/lib/api/serverApi";
 
 interface NotesProps {
   params: Promise<{ slug: string[] }>;

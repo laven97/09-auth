@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import css from "./ProfilePage.module.css";
-import { getMe } from "@/lib/api/serviceApi";
+import { getMe } from "@/lib/api/serverApi";
 
 export default async function ProfilePage() {
   let user;
