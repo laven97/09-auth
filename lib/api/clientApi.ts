@@ -38,7 +38,7 @@ export async function checkSession(): Promise<User | null> {
 export async function getMe(): Promise<User> {
   const { data } = await nextService.get<User>("/users/me");
   return data;
-}
+} 
 
 export async function updateMe(payload: { username: string }): Promise<User> {
   const { data } = await nextService.patch<User>("/users/me", payload);
