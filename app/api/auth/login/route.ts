@@ -1,49 +1,44 @@
-import { NextRequest, NextResponse } from "next/server";
-import { parse } from "cookie";
-import { cookies } from "next/headers";
-
-import { api } from "../../api";
-import { ApiError } from "@/lib/api/api";
+import { NextRequest, NextResponse } from 'next/server';
+import { api } from '../../api';
+import { cookies } from 'next/headers';
+import { parseSetCookie } from 'cookie';
+import { isAxiosError } from 'axios';
+import { logErrorResponse } from '../../_utils/utils';
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
   try {
-    const apiRes = await api.post("auth/login", body);
+    const body = await req.json();
+    const apiRes = await api.post('auth/login', body);
 
     const cookieStore = await cookies();
-    const setCookie = apiRes.headers["set-cookie"];
+    const setCookie = apiRes.headers['set-cookie'];
 
     if (setCookie) {
       const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
       for (const cookieStr of cookieArray) {
-        const parsed = parse(cookieStr);
-        const options = {
-          expires: parsed.expires ? new Date(parsed.expires) : undefined,
-          path: parsed.path,
-          maxAge: Number(parsed["Max-Age"]),
-        };
+        const parsed = parseSetCookie(cookieStr);
 
-        if (parsed.accessToken) {
-          cookieStore.set("accessToken", parsed.accessToken, options);
-        }
-        if (parsed.refreshToken) {
-          cookieStore.set("refreshToken", parsed.refreshToken, options);
-        }
-        if (parsed.sessionId) {
-          cookieStore.set("sessionId", parsed.sessionId, options);
+        if (parsed.value) {
+          cookieStore.set(parsed.name, parsed.value, parsed);
         }
       }
+
+      return NextResponse.json(apiRes.data, { status: apiRes.status });
     }
 
-    return NextResponse.json(apiRes.data, { status: apiRes.status });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message, response: error.response?.data },
+        { status: error.status }
+      );
+    }
+    logErrorResponse({ message: (error as Error).message });
     return NextResponse.json(
-      {
-        error:
-          (error as ApiError).response?.data?.error ??
-          (error as ApiError).message,
-      },
-      { status: (error as ApiError).status }
+      { error: 'Internal Server Error' },
+      { status: 500 }
     );
   }
 }

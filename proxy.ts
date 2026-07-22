@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { parseSetCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { checkSession } from "./lib/api/serverApi";
 
 export async function proxy(req: NextRequest) {
@@ -39,41 +39,10 @@ export async function proxy(req: NextRequest) {
             : [setCookieHeader];
 
           cookiesArray.forEach((cookieStr) => {
-            const parts = cookieStr.split(";").map((p) => p.trim());
+            const cookie = parseSetCookie(cookieStr);
 
-            const [nameValue] = parts;
-            const [name, value] = nameValue.split("=");
-
-            const options: Partial<ResponseCookie> = {};
-
-            parts.slice(1).forEach((attr) => {
-              const [k, v] = attr.split("=");
-              switch (k.toLowerCase()) {
-                case "httponly":
-                  options.httpOnly = true;
-                  break;
-                case "secure":
-                  options.secure = true;
-                  break;
-                case "samesite":
-                  if (v) {
-                    const val = v.toLowerCase();
-                    if (["strict", "lax", "none"].includes(val)) {
-                      options.sameSite = val as "strict" | "lax" | "none";
-                    }
-                  }
-                  break;
-                case "expires":
-                  if (v) options.expires = new Date(v);
-                  break;
-                case "path":
-                  if (v) options.path = v;
-                  break;
-              }
-            });
-
-            if (value) {
-              res.cookies.set(name, value, options);
+            if (cookie) {
+              res.cookies.set(cookie);
             }
           });
         }
