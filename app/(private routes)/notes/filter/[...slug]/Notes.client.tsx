@@ -11,6 +11,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import { NoteTags } from "@/types/note";
 import Link from "next/link";
 import { fetchNotes } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 
 interface NotesClientProps {
   tag: NoteTags;
@@ -20,6 +21,7 @@ export function NotesClient({ tag }: NotesClientProps) {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setSearch(value);
@@ -29,6 +31,7 @@ export function NotesClient({ tag }: NotesClientProps) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["notes", tag, search, page],
     queryFn: () => fetchNotes(tag, search, page),
+    enabled: isAuthenticated,
   });
 
   const notes = data?.notes ?? [];
@@ -63,7 +66,6 @@ export function NotesClient({ tag }: NotesClientProps) {
       {isLoading && <p>Loading...</p>}
 
       {isError && <p>Error...</p>}
-
     </div>
   );
 }

@@ -47,7 +47,7 @@ export async function fetchNotes(
   if (search) params.search = search;
 
   const cookieHeader = await buildCookieHeader();
-  const res = await api.get<Answer>("/notes", {
+  const res = await nextService.get<Answer>("/notes", {
     params,
     headers: {
       Cookie: cookieHeader,

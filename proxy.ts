@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 
-import { parseSetCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { checkSession } from "./lib/api/serverApi";
+import { parseSetCookie } from "set-cookie-parser";
 
 export async function proxy(req: NextRequest) {
   const cookieStore = await cookies();
@@ -27,7 +27,12 @@ export async function proxy(req: NextRequest) {
         const response = await checkSession();
 
         if (!response?.data) {
-          return NextResponse.redirect(new URL("/sign-in", req.url));
+          const redirectRes = NextResponse.redirect(
+            new URL("/sign-in", req.url)
+          );
+          redirectRes.cookies.delete("accessToken");
+          redirectRes.cookies.delete("refreshToken");
+          return redirectRes;
         }
 
         const res = NextResponse.next();
@@ -38,19 +43,21 @@ export async function proxy(req: NextRequest) {
             ? setCookieHeader
             : [setCookieHeader];
 
-          cookiesArray.forEach((cookieStr) => {
-            const cookie = parseSetCookie(cookieStr);
+          const parsedCookie = parseSetCookie(cookiesArray);
 
-            if (cookie) {
-              res.cookies.set(cookie);
-            }
+          parsedCookie.forEach((cookie) => {
+            res.cookies.set(cookie.name, cookie.value, {
+              path: cookie.path,
+              expires: cookie.expires,
+              maxAge: cookie.maxAge,
+              sameSite: cookie.sameSite as
+                | "strict"
+                | "lax"
+                | "none"
+                | undefined,
+            });
           });
         }
-
-        if (isAuthRoute) {
-          return NextResponse.redirect(new URL("/", req.url));
-        }
-
         return res;
       } else {
         return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -62,5 +69,11 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/notes/:path*", "/sign-in", "/sign-up"],
+  matcher: [
+    "/profile/:path*",
+    "/notes/:path*",
+    "/sign-in",
+    "/sign-up",
+    "/api/:path*",
+  ],
 };

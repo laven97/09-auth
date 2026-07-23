@@ -36,12 +36,16 @@ export async function checkSession(): Promise<User | null> {
 }
 
 export async function getMe(): Promise<User> {
-  const { data } = await nextService.get<User>("/users/me");
+  const { data } = await nextService.get<User>("/users/me", {
+    withCredentials: true,
+  });
   return data;
-} 
+}
 
 export async function updateMe(payload: { username: string }): Promise<User> {
-  const { data } = await nextService.patch<User>("/users/me", payload);
+  const { data } = await nextService.patch<User>("/users/me", payload, {
+    withCredentials: true,
+  });
   return data;
 }
 
@@ -54,23 +58,23 @@ export async function fetchNotes(
   if (tag && tag !== "all") params.tag = tag;
   if (search) params.search = search;
 
-  const res = await api.get<Answer>("/notes", { params });
+  const res = await nextService.get<Answer>("/notes", { params });
   return res.data;
 }
 
 export async function fetchNoteById(id: string): Promise<Note> {
-  const res: AxiosResponse<Note> = await api.get(`/notes/${id}`);
+  const res: AxiosResponse<Note> = await nextService.get(`/notes/${id}`);
   return res.data;
 }
 
 export async function createNote(
   note: Omit<Note, "id" | "createdAt" | "updatedAt">
 ): Promise<Note> {
-  const res: AxiosResponse<Note> = await api.post("/notes", note);
+  const res: AxiosResponse<Note> = await nextService.post("/notes", note);
   return res.data;
 }
 
 export async function deleteNote(id: string): Promise<Note> {
-  const res: AxiosResponse<Note> = await api.delete(`/notes/${id}`);
+  const res: AxiosResponse<Note> = await nextService.delete(`/notes/${id}`);
   return res.data;
 }

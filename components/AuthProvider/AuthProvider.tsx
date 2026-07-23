@@ -7,9 +7,10 @@ import { useAuthStore } from "@/lib/store/authStore";
 
 type Props = {
   children: React.ReactNode;
+  hasInitialToken?: boolean;
 };
 
-const AuthProvider = ({ children }: Props) => {
+const AuthProvider = ({ children, hasInitialToken }: Props) => {
   const setUser = useAuthStore((state) => state.setUser);
   const clearIsAuthenticated = useAuthStore(
     (state) => state.clearIsAuthenticated
@@ -17,16 +18,24 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const isAuthenticated = await checkSession();
-      if (isAuthenticated) {
-        const user = await getMe();
-        if (user) setUser(user);
-      } else {
+      try {
+        const isAuthenticated = await checkSession();
+
+        if (isAuthenticated) {
+          const user = await getMe();
+          if (user) {
+            setUser(user);
+          } else {
+            clearIsAuthenticated();
+          }
+        }
+      } catch (err) {
         clearIsAuthenticated();
       }
     };
+
     fetchUser();
-  }, [setUser, clearIsAuthenticated]);
+  }, [hasInitialToken, setUser, clearIsAuthenticated]);
 
   return children;
 };
