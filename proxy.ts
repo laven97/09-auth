@@ -74,6 +74,5 @@ export const config = {
     "/notes/:path*",
     "/sign-in",
     "/sign-up",
-    "/api/:path*",
   ],
 };
