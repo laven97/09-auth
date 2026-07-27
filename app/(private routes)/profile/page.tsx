@@ -3,6 +3,22 @@ import Image from "next/image";
 
 import css from "./ProfilePage.module.css";
 import { getMe } from "@/lib/api/serverApi";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const user = await getMe();
+    return {
+      title: `${user.username} | Profile`,
+      description: `Profile page of ${user.username}`,
+    };
+  } catch {
+    return {
+      title: "Profile",
+      description: "User profile page",
+    };
+  }
+}
 
 export default async function ProfilePage() {
   let user;
